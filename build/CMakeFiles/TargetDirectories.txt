@@ -1,0 +1,3 @@
+/home/guillemmv/Projectes/game-of-life/build/CMakeFiles/Game_Of_Life.dir
+/home/guillemmv/Projectes/game-of-life/build/CMakeFiles/edit_cache.dir
+/home/guillemmv/Projectes/game-of-life/build/CMakeFiles/rebuild_cache.dir
