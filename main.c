@@ -8,32 +8,35 @@ AUTHOR: GUILLEMMV
 */
 
 char matrix[50][50];
-int rows = 20;
-int cols = 50;
 int gen = 0;
 
+#define ROWS 20
+#define COLS 50
+#define LIVE_CELL '*'
+#define DEAD_CELL '.'
+
+
 void fillMatrix(){
-	int i, j;
-	for(i=0; i<rows; i++){
-		for(j=0; j<cols; j++){
-			matrix[i][j] = '.';
+	for(int i=0; i<ROWS; i++){
+		for(int j=0; j<COLS; j++){
+			matrix[i][j] = DEAD_CELL;
 		}
 	}
 }
 
 void showMatrix(){
-	int i, j;
+	int j;
 	gen++;
 	system("clear");
 	printf("GENERATION: %d\n----------\n",gen); 
 
-	for(i=0; i<rows; i++){
-		for(j=0; j<cols; j++){
+	for(int i=0; i<ROWS; i++){
+		for(j=0; j<COLS; j++){
 			printf("%c",matrix[i][j]);
 		}
 		printf("\n");
 	}
-	sleep(1);
+	usleep(100000);
 }
 
 void generateRandomCells(){
@@ -44,20 +47,60 @@ void generateRandomCells(){
 	int randomNum = rand() % (15-1+1);
 	int i;
 
+	
 	for(i=0; i<randomNum; i++){
-		matrix[randomRow][randomCol] = '0';
+		matrix[randomRow][randomCol] = LIVE_CELL;
+		matrix[randomRow][randomCol-1] = LIVE_CELL;
+		matrix[randomRow][randomCol+1] = LIVE_CELL;
+		matrix[randomRow-1][randomCol] = LIVE_CELL;
+		matrix[randomRow+1][randomCol] = LIVE_CELL;
+	}
+}
+
+void setAliveCells(){
+	
+}
+
+void getNextGeneration(){
+	for(int i=0; i<ROWS; i++){
+		for(int j=0; j<COLS; j++){
+			
+			int neighboursCount = 0;
+				char neighbours[] = {matrix[i][j], matrix[i-1][j], matrix[i+1][j]
+					,matrix[i][j+1],matrix[i][j-1],matrix[i-1][j-1],matrix[i+1][j+1]
+					,matrix[i+1][j-1],matrix[i-1][j+1]};
+
+			if(matrix[i][j] == LIVE_CELL){
+				for(int i=0; i<=sizeof(neighbours); i++){
+					if(neighbours[i]==LIVE_CELL){
+						neighboursCount++;
+					}
+				}
+				if(neighboursCount == 0 || neighboursCount >= 4 || neighboursCount == 1){
+					matrix[i][j] = DEAD_CELL;
+				}
+			}
+			else{
+				for(int i=0; i<=sizeof(neighbours); i++){
+					if(neighbours[i]==LIVE_CELL){
+						neighboursCount++;
+					}
+				}
+				if(neighboursCount == 3){
+					matrix[i][j] = LIVE_CELL;
+				}
+			}
+		}
 	}
 }
 
 int main(){
+	printf("\e[?25l");
 	fillMatrix();
+	generateRandomCells();
 	for(;;){
-		generateRandomCells();
 		showMatrix();
-		generateRandomCells();
-		if(gen==10){
-			break;
-		}
+		getNextGeneration();
 	}
 	return 0;
 }
